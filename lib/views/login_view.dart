@@ -30,59 +30,47 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
+    return Column(
+      children: [
+        TextField(
+          controller: _email,
+          enableSuggestions: false,
+          autocorrect: false,
+          keyboardType: TextInputType.emailAddress,
+          decoration: const InputDecoration(
+            hintText: "Enter Email",
+          ),
         ),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return Column(
-                children: [
-                  TextField(
-                    controller: _email,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      hintText: "Enter Email",
-                    ),
-                  ),
-                  TextField(
-                      controller: _password,
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      decoration: const InputDecoration(
-                        hintText: "Enter Password",
-                      )),
-                  TextButton(
-                      onPressed: () async {
-                        final email = _email.text;
-                        final password = _password.text;
-                        try {
-                          final userCredential = await FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                                  email: email, password: password);
-                          print('Login Successful');
-                        } on FirebaseAuthException catch (e) {
-                          print(e.code);
-                        } catch (e) {
-                          print("Somthing bad happened...");
-                        }
-                      },
-                      child: const Text('Login')),
-                ],
-              );
-            default:
-              return const Text('Loading..');
-          }
-        },
-      ),
+        TextField(
+            controller: _password,
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            decoration: const InputDecoration(
+              hintText: "Enter Password",
+            )),
+        TextButton(
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
+              try {
+                final userCredential = await FirebaseAuth.instance
+                    .signInWithEmailAndPassword(
+                        email: email, password: password);
+                // ignore: avoid_print
+                print('Login Successful');
+                // ignore: avoid_print
+                print(userCredential);
+              } on FirebaseAuthException catch (e) {
+                // ignore: avoid_print
+                print(e.code);
+              } catch (e) {
+                // ignore: avoid_print
+                print("Somthing bad happened...");
+              }
+            },
+            child: const Text('Login')),
+      ],
     );
   }
 }
