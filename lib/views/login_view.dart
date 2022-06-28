@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -44,42 +45,48 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
           TextField(
-              controller: _password,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: const InputDecoration(
-                hintText: "Enter Password",
-              )),
+            controller: _password,
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            decoration: const InputDecoration(
+              hintText: "Enter Password",
+            ),
+          ),
           TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
-                try {
-                  final userCredential = await FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
-                          email: email, password: password);
-                  // ignore: avoid_print
-                  print('Login Successful');
-                  // ignore: avoid_print
-                  print(userCredential);
-                } on FirebaseAuthException catch (e) {
-                  // ignore: avoid_print
-                  print(e.code);
-                } catch (e) {
-                  // ignore: avoid_print
-                  print("Somthing bad happened...");
-                }
-              },
-              child: const Text('Login')),
-          TextButton(
-              onPressed: () {
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
+              try {
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: email,
+                  password: password,
+                );
+                if (!mounted) return;
+                // Direct to NotesView() if login successfull
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/register/',
+                  '/notes/',
                   (route) => false,
                 );
-              },
-              child: const Text('Register Now'))
+              } on FirebaseAuthException catch (e) {
+                // ignore: avoid_print
+                print(e.code);
+              } catch (e) {
+                // ignore: avoid_print
+                print("Somthing bad happened...");
+              }
+            },
+            child: const Text('Login'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/register/',
+                (route) => false,
+              );
+            },
+            child: const Text('Register Now'),
+          )
         ],
       ),
     );
